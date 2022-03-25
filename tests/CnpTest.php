@@ -10,8 +10,7 @@ final class CnpTest extends TestCase
         $this->assertFalse(isCnpValid('123'));
     }
 
-    public function testIsNotNumeric()
-    {
+    public function testIsNotNumeric() {
         $this->assertFalse(isCnpValid('1234567890ABC'));
     }
 
