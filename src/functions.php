@@ -27,15 +27,15 @@ function getCnpDate(string $value) : array {
         case 7:
         case 8:
         case 9:
-            $sentury = 1900;
+            $century = 1900;
             break;
         case 5:
         case 6:
-            $sentury = 2000;
+            $century = 2000;
             break;
         case 3:
         case 4:
-            $sentury = 1800;
+            $century = 1800;
             break;
         case 0:
             return [
@@ -47,7 +47,7 @@ function getCnpDate(string $value) : array {
     return [
         'day'   => (int) ($value[5] . $value[6]),
         'month' => (int) ($value[3] . $value[4]),
-        'year'  => $sentury + intval($value[1] . $value[2]),
+        'year'  => $century + intval($value[1] . $value[2]),
     ];
 }
 
