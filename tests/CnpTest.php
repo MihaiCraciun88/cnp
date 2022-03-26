@@ -14,18 +14,8 @@ final class CnpTest extends TestCase
 
     public function testDateInvalid() {
         // 1999-02-29
-        $date = getCnpDate('0990229000000');
+        $date = getCnpDate('1990229000000');
         $this->assertFalse(checkdate($date['month'], $date['day'], $date['year']));
-
-        // 5 1999-02-28
-        $cnp = '5990228000000';
-        $date = getCnpDate($cnp);
-        $this->assertFalse(isSexValid($cnp, $date));
-
-        // 1 2002-02-28
-        $cnp = '1020228000000';
-        $date = getCnpDate($cnp);
-        $this->assertFalse(isSexValid($cnp, $date));
     }
 
     public function testCheckSum() {

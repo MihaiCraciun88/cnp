@@ -13,10 +13,6 @@ function isCnpValid(string $value) : bool {
         return false;
     }
 
-    if (!isSexValid($value, $date)) {
-        return false;
-    }
-
     if (getCountyName($value[7] . $value[8]) === null) {
         return false;
     }
@@ -25,35 +21,34 @@ function isCnpValid(string $value) : bool {
 }
 
 function getCnpDate(string $value) : array {
-    $dt = DateTime::createFromFormat('y', $value[1] . $value[2]);
-    return [
-        'day'   => (int) ($value[5] . $value[6]),
-        'month' => (int) ($value[3] . $value[4]),
-        'year'  => (int) $dt->format('Y'),
-    ];
-}
-
-function isBetween(int $value, int $min, int $max) : bool {
-    return $value >= $min && $value <= $max;
-}
-
-function isSexValid(string $value, array $date) : bool {
     switch ((int) $value[0]) {
         case 1:
         case 2:
-            if (!isBetween($date['year'], 1900, 1999)) {
-                return false;
-            }
+        case 7:
+        case 8:
+        case 9:
+            $sentury = 1900;
             break;
         case 5:
         case 6:
-            if (!isBetween($date['year'], 2000, 2099)) {
-                return false;
-            }
+            $sentury = 2000;
             break;
-        case 0: return false;
+        case 3:
+        case 4:
+            $sentury = 1800;
+            break;
+        case 0:
+            return [
+                'day'   => 0,
+                'month' => 0,
+                'year'  => 0,
+            ];
     }
-    return true;
+    return [
+        'day'   => (int) ($value[5] . $value[6]),
+        'month' => (int) ($value[3] . $value[4]),
+        'year'  => $sentury + intval($value[1] . $value[2]),
+    ];
 }
 
 function getCountyName(string $code) : ?string {
