@@ -1,5 +1,5 @@
 # cnp
  
 #### mod de folosire
-rulat in consola:
+rulati in consola:
 `php cnp.php {arg}`
