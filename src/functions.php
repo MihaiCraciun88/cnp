@@ -9,34 +9,19 @@ function isCnpValid(string $value) : bool {
     }
 
     $date = getCnpDate($value);
-    if (checkdate($date['month'], $date['day'], $date['year']) === false) {
+    if (!checkdate($date['month'], $date['day'], $date['year'])) {
         return false;
     }
 
-    switch ((int) $value[0]) {
-        case 1:
-        case 2:
-            if (!isBetween($date['year'], 1900, 1999)) {
-                return false;
-            }
-            break;
-        case 5:
-        case 6:
-            if (!isBetween($date['year'], 2000, 2099)) {
-                return false;
-            }
-            break;
+    if (!isSexValid($value, $date)) {
+        return false;
     }
 
     if (getCountyName($value[7] . $value[8]) === null) {
         return false;
     }
 
-    if (cnpCheckSum($value) === false) {
-        return false;
-    }
-    
-    return true;
+    return getCnpCheckSum($value) === intval($value[12]);
 }
 
 function getCnpDate(string $value) : array {
@@ -50,6 +35,25 @@ function getCnpDate(string $value) : array {
 
 function isBetween(int $value, int $min, int $max) : bool {
     return $value >= $min && $value <= $max;
+}
+
+function isSexValid(string $value, array $date) : bool {
+    switch ((int) $value[0]) {
+        case 1:
+        case 2:
+            if (!isBetween($date['year'], 1900, 1999)) {
+                return false;
+            }
+            break;
+        case 5:
+        case 6:
+            if (!isBetween($date['year'], 2000, 2099)) {
+                return false;
+            }
+            break;
+        case 0: return false;
+    }
+    return true;
 }
 
 function getCountyName(string $code) : ?string {
@@ -106,11 +110,12 @@ function getCountyName(string $code) : ?string {
     return $names[$code] ?? null;
 }
 
-function cnpCheckSum(string $value) : bool {
+function getCnpCheckSum(string $value) : int {
     $ctrlString = '279146358279';
     $sum = 0;
     for ($i = 0; $i <= 11; $i++) {
         $sum += intval($ctrlString[$i]) * intval($value[$i]);
     }
-    return (($sum % 11) % 10) === intval($value[12]);
+    $mod = $sum % 11;
+    return ($mod === 10) ? 1 : $mod;
 }

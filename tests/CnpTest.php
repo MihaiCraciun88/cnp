@@ -4,9 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CnpTest extends TestCase
 {
-    protected $cnp = '1880118430085';
-
-    public function testInvalidStringLen() {
+    public function testStringLenInvalid() {
         $this->assertFalse(isCnpValid('123'));
     }
 
@@ -14,35 +12,33 @@ final class CnpTest extends TestCase
         $this->assertFalse(isCnpValid('1234567890ABC'));
     }
 
-    public function testInvalidDate() {
-        $cnp = $this->cnp;
-
+    public function testDateInvalid() {
         // 1999-02-29
-        $cnp[1] = '9';
-        $cnp[2] = '9';
-        $cnp[3] = '0';
-        $cnp[4] = '2';
-        $cnp[5] = '2';
-        $cnp[6] = '9';
-        $this->assertFalse(isCnpValid($cnp));
+        $date = getCnpDate('0990229000000');
+        $this->assertFalse(checkdate($date['month'], $date['day'], $date['year']));
 
         // 5 1999-02-28
-        $cnp[0] = '5';
-        $cnp[6] = '8';
-        $this->assertFalse(isCnpValid($cnp));
+        $cnp = '5990228000000';
+        $date = getCnpDate($cnp);
+        $this->assertFalse(isSexValid($cnp, $date));
 
         // 1 2002-02-28
-        $cnp[0] = '1';
-        $cnp[1] = '0';
-        $cnp[2] = '2';
-        $this->assertFalse(isCnpValid($cnp));
+        $cnp = '1020228000000';
+        $date = getCnpDate($cnp);
+        $this->assertFalse(isSexValid($cnp, $date));
     }
 
     public function testCheckSum() {
-        $this->assertTrue(cnpCheckSum($this->cnp));
+        $cnp = '1900228100012';
+        $this->assertTrue(getCnpCheckSum($cnp) === intval($cnp[12]));
     }
 
     public function testValid() {
-        $this->assertTrue(isCnpValid($this->cnp));
+        for ($i = 1; $i <= 9; $i++) {
+            $cnp = '190022810001';
+            $cnp[11] = $i;
+            $cnp .= getCnpCheckSum($cnp);
+            $this->assertTrue(isCnpValid($cnp));
+        }
     }
 }
